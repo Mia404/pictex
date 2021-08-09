@@ -1,0 +1,154 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+
+	<groupId>com.daejin.pictex</groupId>
+	<artifactId>Pictex</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>jar</packaging>
+
+	<name>Pictex</name>
+	<!-- FIXME change it to the project's website --> 
+	<url>http://www.example.com</url>
+
+	<!-- 
+	package를 실행 할 시에 war 프로젝트는 따로 명시를 해주지 않아도 WEB-INF/lib에 dependency 라이브러리 파일을 복사해서 포함을 시켜준다. 
+	이에 반해 jar 프로젝트는 따로 명시를 해 주지 않으면 포함이 되지 않는다.
+	 -->
+	 
+	<properties>
+		<project.build.sourceEncoding>UTF-8</project.build.sourceEncoding>
+		<maven.compiler.source>1.8</maven.compiler.source>
+		<maven.compiler.target>1.8</maven.compiler.target>
+		<start-class>com.daejin.pictex.Pictex.Main</start-class> <!-- 메인클래스  -->
+     	<packaging.type>jar</packaging.type>
+     	<logback.version>1.1.7</logback.version>
+	</properties>
+
+	<dependencies>
+		<dependency>
+			<groupId>junit</groupId>
+			<artifactId>junit</artifactId>
+			<version>4.11</version>
+			<scope>test</scope>
+		</dependency>
+		
+		<!-- tess4j 사용 -->
+		<dependency>
+			<groupId>net.sourceforge.tess4j</groupId>
+			<artifactId>tess4j</artifactId>
+			<version>4.5.1</version>
+			<!-- JNA 충돌 문제 발생 제거 -->
+			<exclusions>
+		        <exclusion>
+		            <groupId>com.sun.jna</groupId>
+		            <artifactId>jna</artifactId>
+		        </exclusion>
+		    </exclusions>
+		</dependency>
+		
+		<!-- logback 추가 예정 -->
+	</dependencies>
+
+	<build>
+		<!-- 리소스 경로 설정 -->
+		<resources>		     
+			<resource>      
+		    	<directory>src/resources</directory>
+		    </resource>
+		</resources>
+		 
+		<pluginManagement><!-- lock down plugins versions to avoid using Maven defaults (may be moved to parent pom) -->
+			<plugins>
+				<!-- clean lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#clean_Lifecycle -->
+				<plugin>
+					<artifactId>maven-clean-plugin</artifactId>
+					<version>3.1.0</version>
+				</plugin>
+				<!-- default lifecycle, jar packaging: see https://maven.apache.org/ref/current/maven-core/default-bindings.html#Plugin_bindings_for_jar_packaging -->
+				<plugin> 
+					<artifactId>maven-resources-plugin</artifactId>
+					<version>3.0.2</version>
+				</plugin>
+				
+				<plugin>
+					<artifactId>maven-compiler-plugin</artifactId>
+					<version>3.8.0</version>
+					<configuration>
+                    	<source>1.8</source>
+                    	<target>1.8</target>
+                	</configuration>
+				</plugin>
+				
+				<plugin>
+					<artifactId>maven-surefire-plugin</artifactId>
+					<version>2.22.1</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-install-plugin</artifactId>
+					<version>2.5.2</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-deploy-plugin</artifactId>
+					<version>2.8.2</version>
+				</plugin>
+				<!-- site lifecycle, see https://maven.apache.org/ref/current/maven-core/lifecycles.html#site_Lifecycle -->
+				<plugin>
+					<artifactId>maven-site-plugin</artifactId>
+					<version>3.7.1</version>
+				</plugin>
+				<plugin>
+					<artifactId>maven-project-info-reports-plugin</artifactId>
+					<version>3.0.0</version>
+				</plugin>
+				
+				<!-- jar 플러그인 추가 -->
+				<plugin>
+					<groupId>org.apache.maven.plugins</groupId>
+					<artifactId>maven-dependency-plugin</artifactId>
+			   		<executions>
+				        <execution>
+				        	<id>copy-dependencies</id>
+				            <phase>package</phase>
+				            <goals>
+				            	<goal>copy-dependencies</goal>
+				            </goals>
+				            <configuration>
+				            	<outputDirectory>${project.build.directory}/lib/</outputDirectory>
+				               	<overWriteReleases>false</overWriteReleases>
+				               	<overWriteSnapshots>false</overWriteSnapshots>
+				               	<overWriteIfNewer>true</overWriteIfNewer>
+				            </configuration>
+			        	</execution>
+					</executions>
+				</plugin>
+   
+			   	<plugin>
+			    	<groupId>org.apache.maven.plugins</groupId>
+			      	<artifactId>maven-jar-plugin</artifactId>
+			      	<configuration>
+				        <archive>
+				        	<manifest>
+				            	<addClasspath>true</addClasspath>
+				            	<classpathPrefix>lib/</classpathPrefix>
+				            	<mainClass>com.daejin.pictex.Pictex.Main</mainClass>
+				           	</manifest> 
+				         </archive>
+			       	</configuration>
+			   	</plugin>
+			   	
+			   	<!-- lib가 포함된 jar를 생성하기 위해 추가한 플러그인  goal에 assembly:assembly 를 넣고 빌드 -->
+			   	<plugin>
+			        <groupId>org.apache.maven.plugins</groupId>
+			        <artifactId>maven-assembly-plugin</artifactId>
+			        <version>2.2.1</version>
+			        <configuration>
+			          <descriptorRefs>
+			            <descriptorRef>jar-with-dependencies</descriptorRef>
+			          </descriptorRefs>
+			        </configuration>
+				</plugin>
+			</plugins>
+		</pluginManagement>
+	</build>
+</project>
